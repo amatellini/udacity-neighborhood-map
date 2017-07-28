@@ -4,10 +4,10 @@ This project is part of the [Front-End Web Developer Nanodegree](https://www.uda
 
 It's a SPA thap present a list of Milan restaurants and their position on Google Maps with some extra data.
 
-The restaurants data is extracted with xxx API.
+The restaurants phone and category (expensive, etc.) are extracted with [Foursquare](foursquare.com) API.
 
 
-# How To Use
+## How To Use
 
 - Clone the repository from Github.
 - Open the index.html file in your browser.

@@ -2,47 +2,73 @@
 
 var restaurants = [
 	{
-		name: 'Pavarotti Milano',
-		addr: '4° piano Piazza Duomo, 21 20121 Milano Italia',
-		lat: 45.464826,
-		long: 9.18957 	
+	    id: '54ea6352498ed06013b15573',
+		name: 'Risoelatte',
+        lat: 45.466602,
+        long: 9.183237
 	},
 	{
+	    id: '519167e6454a090dc94f5358',
 		name: 'Bys Milano',
-		addr: 'Via Alberico Albricci, 3 20122 Milano Italia',
-		lat: 45.465454,
-		long: 9.186516 	
+        lat: 45.46107881317024,
+        long: 9.189484119415283
 	},
 	{
+	    id: '55984f26498e9a82a9f22999',
 		name: 'Seafood Bar Milano',
-		addr: 'Via Luisa Battistotti Sassi, 11 I-20133 Milano Italia',
-		lat: 45.463005,
-		long: 9.227596 	
+        lat: 45.449944831559115,
+        long: 9.179983988963892
 	},
 	{
-		name: 'Folk',
-		addr: 'Via Magolfa, 25 20143 Milano Italia',
-		lat: 45.449705,
-		long: 9.174445 	
+	    id: '4c4ec76bdb2c20a13639f274',
+		name: 'De Pasajo',
+        lat: 45.457473,
+        long: 9.172913
 	},
 	{
+	    id: '585c53b3ea1c0d57643629a1',
 		name: 'Savini Tartufi Truffle Restaurant',
-		addr: 'Viale Monte Grappa, 12 - Presso Hotel NH (Palazzo Moscova) 20124 Milano Italia',
-		lat: 45.480968,
-		long: 9.189977 	
+        lat: 45.480972,
+        long: 9.189986
 	},
 ];
 
 var map;
+var clientId = "KB05ZIGSOYUH3S2PU4LNZDMAVT3IOP1J5ND0XKOFS05Q0K5C";
+var secret = "UA24WDSBDYXEQQMO3GFLKJ0SS0KOLKGI1V2M4OVTYK4QWDTD";
+var secretDate = "20170101";
 
 var Restaurant = function(data) {
 	var self = this;
 	this.name = data.name;
-	this.addr = data.addr;
+
 	this.lat = data.lat;
 	this.long = data.long;
 	
 	this.visible = ko.observable(true);
+
+    //F****g Yelp, doesn't support CORS!
+    // var yelpURL = 'https://api.yelp.com/v3/businesses/' + data.id;
+    //
+    // $.ajax({
+    //     beforeSend: function(request) {
+    //         request.setRequestHeader("Authorization", 'Bearer imjy7YQ5kFWJ4smjv6n8gVWojyzBrgP7OloIAsu6AsY2AbUZy-INJ2wUPmLDfK3KsLZtfiYHugzewmy351dVCcsw71k2OcdC0FNU50qyl1ttqxM-XHoe1z0bJQ97WXYx');
+    //         request.setRequestHeader("Access-Control-Allow-Origin", '*');
+    //     },
+    //     url: yelpURL,
+    //     success: function(retData) {
+    //     },
+    //     error: alert('error')
+    // });
+
+    var URL = "https://api.foursquare.com/v2/venues/" + data.id + "?client_id=" + clientId + "&client_secret=" + secret + "&v=" + secretDate;
+
+    $.getJSON(URL, function (data) {
+        var ret = data.response.venue;
+        self.addr = ret.location.formattedAddress[0] + ", " + ret.location.formattedAddress[1];
+        self.phone = ret.contact.phone;
+        self.price = ret.price.message;
+    });
 
 	this.infoWindow = new google.maps.InfoWindow({content: self.contentString});
 	
@@ -50,9 +76,10 @@ var Restaurant = function(data) {
 	this.marker = new google.maps.Marker({
 			position: new google.maps.LatLng(data.lat, data.long),
 			map: map,
-			title: data.name
+			title: data.name,
+            animation: null
 	});
-	
+
 	//show the marker
 	this.showMarker = ko.computed(function() {
 		if(this.visible() === true) {
@@ -65,9 +92,28 @@ var Restaurant = function(data) {
 	
 	//add click listener -> show InfoWindow
 	this.marker.addListener('click', function(){
-		self.contentString = 	'<div class="info-window-content"><div class="title"><b>' + data.name + '</b></div>' +
-								'<div class="content">' + data.addr + '</div>' +
-								'</div>';
+
+        if (self.marker.getAnimation() !== null) {
+            self.marker.setAnimation(null);
+        } else {
+            self.marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {
+                self.marker.setAnimation(null);
+            }, 2000);
+        }
+
+		self.contentString = '<div class="info-window-content"><div class="title"><b>' + data.name + '</b></div>';
+
+        if(self.addr !== undefined)
+            self.contentString += '<div class="content">' + self.addr + '</div>';
+
+        if(self.phone !== undefined)
+            self.contentString += '<div class="content">' + self.phone + '</div>';
+
+        if(self.price !== undefined)
+            self.contentString += '<div class="content">' + self.price + '</div>';
+
+        self.contentString += '</div>';
 
         self.infoWindow.setContent(self.contentString);
 		self.infoWindow.open(map, this);
