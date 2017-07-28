@@ -39,7 +39,7 @@ html, body {
 
 .list {
     flex-direction: row;
-    padding: 0px;
+    padding: 0;
 }
 
 .restaurant {
