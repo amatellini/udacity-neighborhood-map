@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Milan Restaurant Map</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+</head>
+<body>
+    <div class="app">
+        <div class="restaurants">
+            <div class="search">
+                <input class="search-box" data-bind="textInput: searchTerm, valueUpdate: 'afterkeydown'" />
+            </div>
+            <div class="list">
+                <ul data-bind="foreach: filteredList">
+                    <li class="restaurant" data-bind="text: name"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="map" id="map">Something went wrong Error: Please try again later.</div>
+    </div>
+
+<script src='js/knockout-3.4.2.js'></script>
+<script src='js/jquery-3.2.1.min.js'></script>
+<script src='js/app.js'></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcUmSlwi0qfDA39l6sh6z7lzscLXwFtQY&callback=initApp"
+        onerror="onError()"></script>
+</body>
+</html>
