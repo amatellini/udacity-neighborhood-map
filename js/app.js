@@ -40,6 +40,7 @@ var secretDate = "20170101";
 
 var Restaurant = function(data) {
 	var self = this;
+	this.id = data.id;
 	this.name = data.name;
 
 	this.lat = data.lat;
@@ -124,7 +125,6 @@ function ViewModel() {
 	var self = this;
 
     this.searchTerm = ko.observable("");
-
     this.restaurants = ko.observableArray([]);
 
     //center map to Milan, Italy
@@ -134,7 +134,8 @@ function ViewModel() {
 	});
 	
 	restaurants.forEach(function(restaurant){
-		self.restaurants.push( new Restaurant(restaurant));
+        var r = new Restaurant(restaurant);
+		self.restaurants.push(r);
 	});
 
 	//apply search filter hiding unwanted restaurant
@@ -147,6 +148,11 @@ function ViewModel() {
             return result;
         });
     }, self);
+
+    //add clicked element marker animation
+    this.itemClicked = function(index, event) {
+        google.maps.event.trigger(event.marker, 'click');
+    }
 }
 
 function initApp() {
