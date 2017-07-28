@@ -146,7 +146,3 @@ function ViewModel() {
 function initApp() {
     ko.applyBindings(new ViewModel());
 }
-
-function onError() {
-    alert("Failed to load Milan restaurants map. Try again.");
-}
