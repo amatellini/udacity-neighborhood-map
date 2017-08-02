@@ -1,6 +1,8 @@
 /*global google */
 /*global $ */
 /*global ko */
+/*global swal */
+/*global sweetAlert */
 
 var restaurants = [
     {
@@ -62,7 +64,7 @@ var Restaurant = function(data) {
     .fail(function() {
         sweetAlert("Oops...", "Couldn't get address, phone number and price category from foursquare.com. You could use this web site with reduced functionality or retry later.", "error");
         foursquareError = true;
-    })
+    });
 
     this.infoWindow = new google.maps.InfoWindow({content: self.contentString});
 
