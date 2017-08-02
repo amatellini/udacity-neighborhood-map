@@ -39,6 +39,7 @@ var map;
 var clientId = "KB05ZIGSOYUH3S2PU4LNZDMAVT3IOP1J5ND0XKOFS05Q0K5C";
 var secret = "UA24WDSBDYXEQQMO3GFLKJ0SS0KOLKGI1V2M4OVTYK4QWDTD";
 var secretDate = "20170101";
+var foursquareError = false;
 
 var Restaurant = function(data) {
     var self = this;
@@ -57,7 +58,11 @@ var Restaurant = function(data) {
         self.addr = ret.location.formattedAddress[0] + ", " + ret.location.formattedAddress[1];
         self.phone = ret.contact.phone;
         self.price = ret.price.message;
-    });
+    })
+    .fail(function() {
+        sweetAlert("Oops...", "Couldn't get address, phone number and price category from foursquare.com. You could use this web site with reduced functionality or retry later.", "error");
+        foursquareError = true;
+    })
 
     this.infoWindow = new google.maps.InfoWindow({content: self.contentString});
 
@@ -145,4 +150,15 @@ function ViewModel() {
 
 function initApp() {
     ko.applyBindings(new ViewModel());
+}
+
+function onMapsError() {
+    $(".app").hide();
+
+    swal({
+        title: "Oops...",
+        text: "Couldn't get Google Maps data. Retry later.",
+        type: "error",
+        showConfirmButton: false
+    });
 }
